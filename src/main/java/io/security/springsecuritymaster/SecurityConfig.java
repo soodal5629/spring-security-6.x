@@ -25,7 +25,18 @@ import java.io.IOException;
 @Configuration
 @Slf4j
 public class SecurityConfig {
-    @Bean
+    @Bean("securityFilterChain")
+    public SecurityFilterChain basicSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                //.httpBasic(Customizer.withDefaults()); -> 대부분 basic 설정으로 써도 되긴 함
+                // custom 하게 설정
+                .httpBasic(basic -> basic.authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
+
+        return http.build();
+    }
+
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // http 통신에 대한 인가 정책 설정
