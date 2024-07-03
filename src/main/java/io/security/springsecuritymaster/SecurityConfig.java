@@ -25,7 +25,7 @@ import java.io.IOException;
 @Configuration
 @Slf4j
 public class SecurityConfig {
-    @Bean("securityFilterChain")
+    //@Bean("securityFilterChain")
     public SecurityFilterChain basicSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
@@ -36,7 +36,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    //@Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // http 통신에 대한 인가 정책 설정
@@ -67,7 +67,16 @@ public class SecurityConfig {
                             }
                         })
                         .permitAll()
-                );
+                )
+                .rememberMe(r -> r
+                        //.alwaysRemember(true) // default: false
+                        .tokenValiditySeconds(3600) // 1시간
+                        .userDetailsService(userDetailsService())
+                        .rememberMeParameter("remember")
+                        .rememberMeCookieName("remember")
+                        .key("security")
+                )
+        ;
         return http.build();
     }
 
