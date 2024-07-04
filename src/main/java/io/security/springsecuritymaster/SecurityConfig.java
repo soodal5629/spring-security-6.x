@@ -40,7 +40,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // http 통신에 대한 인가 정책 설정
-                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/anonymous").hasRole("GUEST") // 인증된 사용자는 해당 자원 접근 불가능
+                        .requestMatchers("/anonymous-context", "/authentication").permitAll()
+                        .anyRequest().authenticated())
                 // 인증 실패 시 인증 받도록 하는 방식 설정
 
                 //.formLogin(Customizer.withDefaults()); // 폼 로그인 방식을 기본 default 방식으로 설정
@@ -68,6 +71,7 @@ public class SecurityConfig {
                         })
                         .permitAll()
                 )
+                // rememberMe 설정
                 .rememberMe(r -> r
                         //.alwaysRemember(true) // default: false
                         .tokenValiditySeconds(3600) // 1시간
@@ -76,6 +80,13 @@ public class SecurityConfig {
                         .rememberMeCookieName("remember")
                         .key("security")
                 )
+                // 익명 사용자 설정
+                .anonymous(anonymous -> anonymous
+                        .principal("guest") // default: anonymousUser
+                        // 해당 권한을 가진 사용자만 접근할 수 있는 자원 설정 가능
+                        .authorities("ROLE_GUEST") // default: ROLE_ANONYMOUS
+                )
+
         ;
         return http.build();
     }
