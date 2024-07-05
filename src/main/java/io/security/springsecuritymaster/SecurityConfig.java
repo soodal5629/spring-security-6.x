@@ -3,6 +3,7 @@ package io.security.springsecuritymaster;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +20,9 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
 
@@ -43,6 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/anonymous").hasRole("GUEST") // 인증된 사용자는 해당 자원 접근 불가능
                         .requestMatchers("/anonymous-context", "/authentication").permitAll()
+                        .requestMatchers("/logout-success").permitAll()
                         .anyRequest().authenticated())
                 // 인증 실패 시 인증 받도록 하는 방식 설정
 
@@ -85,6 +91,33 @@ public class SecurityConfig {
                         .principal("guest") // default: anonymousUser
                         // 해당 권한을 가진 사용자만 접근할 수 있는 자원 설정 가능
                         .authorities("ROLE_GUEST") // default: ROLE_ANONYMOUS
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logoutProc")
+                        // logoutUrl 보다 우선순위 높음
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logoutProc", "POST"))
+                        .logoutSuccessUrl("/logout-success")
+                        .logoutSuccessHandler(new LogoutSuccessHandler() { // logoutSuccessUrl 보다 우선순위 높으며 좀더 복잡한 설정 가능
+                            @Override
+                            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                                response.sendRedirect("/logout-success");
+                            }
+                        })
+                        .deleteCookies("JSESSIONID", "remember", "remember-me") // 사실 JSESSIONID와 remember-me는 자동으로 삭제됨
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .clearAuthentication(true) // Authentication 객체 삭제
+                        .addLogoutHandler(new LogoutHandler() {
+                            @Override
+                            public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+                                HttpSession session = request.getSession();
+                                session.invalidate();
+                                // SecurityContext 안에 있는 Authentication 제거
+                                SecurityContextHolder.getContextHolderStrategy().getContext().setAuthentication(null);
+                                // SecurityContext 객체 클리어
+                                SecurityContextHolder.getContextHolderStrategy().clearContext();
+                            }
+                        })
+                        .permitAll() // /logoutProc URL 접근 가능 (logoutSuccessUrl, logoutSuccessHandler 에서 설정한 request는 컨트롤러에서 따로 만들어줘야 함)
                 )
 
         ;

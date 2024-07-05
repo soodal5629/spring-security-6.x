@@ -45,4 +45,9 @@ public class IndexController {
         // 익명 객체 이름 리턴 가능
         return securityContext.getAuthentication().getName();
     }
+
+    @GetMapping("/logout-success")
+    public String  logoutSuccess() {
+        return "logout success";
+    }
 }
