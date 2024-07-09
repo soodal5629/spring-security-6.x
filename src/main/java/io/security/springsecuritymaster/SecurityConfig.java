@@ -22,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
@@ -43,6 +45,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
+        requestCache.setMatchingRequestParameterName("customParam=y");
         http
                 // http 통신에 대한 인가 정책 설정
                 .authorizeHttpRequests(auth -> auth
@@ -65,7 +69,12 @@ public class SecurityConfig {
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                                 log.info("authentication : {}", authentication);
-                                response.sendRedirect("/home");
+                                // SavedRequest
+                                SavedRequest savedRequest = requestCache.getRequest(request, response);
+                                String redirectUrl = savedRequest.getRedirectUrl();
+                                log.info("### redirectUrl = {}", redirectUrl);
+                                response.sendRedirect(redirectUrl);
+                                //response.sendRedirect("/home");
                             }
                         })
                         .failureHandler(new AuthenticationFailureHandler() {
@@ -77,6 +86,7 @@ public class SecurityConfig {
                         })
                         .permitAll()
                 )
+                .requestCache(cache -> cache.requestCache(requestCache))
                 // rememberMe 설정
                 .rememberMe(r -> r
                         //.alwaysRemember(true) // default: false
