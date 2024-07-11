@@ -23,6 +23,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.NullRequestCache;
 import org.springframework.security.web.savedrequest.SavedRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -87,6 +88,7 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .requestCache(cache -> cache.requestCache(requestCache))
+                //.requestCache(cache -> cache.requestCache(new NullRequestCache()))
                 // rememberMe 설정
                 .rememberMe(r -> r
                         //.alwaysRemember(true) // default: false
