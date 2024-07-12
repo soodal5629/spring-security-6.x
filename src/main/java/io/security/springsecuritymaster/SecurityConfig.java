@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -20,6 +22,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -44,49 +47,56 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName("customParam=y");
+        // AuthenticationManagerBuilder를 통한 AuthenticationManager 생성
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        AuthenticationManager authenticationManager = builder.build();
         http
                 // http 통신에 대한 인가 정책 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/anonymous").hasRole("GUEST") // 인증된 사용자는 해당 자원 접근 불가능
                         .requestMatchers("/anonymous-context", "/authentication").permitAll()
                         .requestMatchers("/logout-success").permitAll()
+                        .requestMatchers("/", "/api/login").permitAll()
                         .anyRequest().authenticated())
                 // 인증 실패 시 인증 받도록 하는 방식 설정
 
                 //.formLogin(Customizer.withDefaults()); // 폼 로그인 방식을 기본 default 방식으로 설정
-                .formLogin(form -> form
-                        //.loginPage("/loginPage")
-                        .loginProcessingUrl("/loginProc")
-                        // always use를 false 로 주면 인증 전에 가려고 했던 url로 리다이렉트
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/failed")
-                        .usernameParameter("userId")
-                        .passwordParameter("pwd")
-                        .successHandler(new AuthenticationSuccessHandler() {
-                            @Override
-                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                                log.info("authentication : {}", authentication);
-                                // SavedRequest
-                                SavedRequest savedRequest = requestCache.getRequest(request, response);
-                                String redirectUrl = savedRequest.getRedirectUrl();
-                                log.info("### redirectUrl = {}", redirectUrl);
-                                response.sendRedirect(redirectUrl);
-                                //response.sendRedirect("/home");
-                            }
-                        })
-                        .failureHandler(new AuthenticationFailureHandler() {
-                            @Override
-                            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-                                log.info("exception {}", exception.getMessage());
-                                response.sendRedirect("/login");
-                            }
-                        })
-                        .permitAll()
-                )
+//                .formLogin(form -> form
+//                        //.loginPage("/loginPage")
+//                        .loginProcessingUrl("/loginProc")
+//                        // always use를 false 로 주면 인증 전에 가려고 했던 url로 리다이렉트
+//                        .defaultSuccessUrl("/", true)
+//                        .failureUrl("/failed")
+//                        .usernameParameter("userId")
+//                        .passwordParameter("pwd")
+//                        .successHandler(new AuthenticationSuccessHandler() {
+//                            @Override
+//                            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+//                                log.info("authentication : {}", authentication);
+//                                // SavedRequest
+//                                SavedRequest savedRequest = requestCache.getRequest(request, response);
+//                                String redirectUrl = savedRequest.getRedirectUrl();
+//                                log.info("### redirectUrl = {}", redirectUrl);
+//                                response.sendRedirect(redirectUrl);
+//                                //response.sendRedirect("/home");
+//                            }
+//                        })
+//                        .failureHandler(new AuthenticationFailureHandler() {
+//                            @Override
+//                            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+//                                log.info("exception {}", exception.getMessage());
+//                                response.sendRedirect("/login");
+//                            }
+//                        })
+//                        .permitAll()
+//                )
+                .authenticationManager(authenticationManager)
+                // 커스텀 필터 추가
+                .addFilterBefore(customAuthenticationFilter(http, authenticationManager), UsernamePasswordAuthenticationFilter.class)
                 .requestCache(cache -> cache.requestCache(requestCache))
                 //.requestCache(cache -> cache.requestCache(new NullRequestCache()))
                 // rememberMe 설정
@@ -131,9 +141,15 @@ public class SecurityConfig {
                         })
                         .permitAll() // /logoutProc URL 접근 가능 (logoutSuccessUrl, logoutSuccessHandler 에서 설정한 request는 컨트롤러에서 따로 만들어줘야 함)
                 )
-
         ;
         return http.build();
+    }
+
+    public CustomAuthenticationFilter customAuthenticationFilter(HttpSecurity http, AuthenticationManager authenticationManager) {
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
+        customAuthenticationFilter.setAuthenticationManager(authenticationManager);
+
+        return customAuthenticationFilter;
     }
 
     // application.yml 파일 설정보다 더 우선순위를 가짐
