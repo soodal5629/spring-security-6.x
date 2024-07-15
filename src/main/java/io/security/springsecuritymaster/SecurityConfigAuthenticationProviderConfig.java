@@ -20,10 +20,10 @@ import java.util.List;
 @EnableWebSecurity
 @Configuration
 /**
- * AuthenticationManager 직접 생성, CustomAuthenticationFilter, CustomAuthenticationProvider 적용 Config
+ * CustomAuthenticationProvider 추가 Config
  */
 public class SecurityConfigAuthenticationProviderConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManagerBuilder builder
             , AuthenticationConfiguration configuration) throws Exception {
         AuthenticationManagerBuilder managerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
