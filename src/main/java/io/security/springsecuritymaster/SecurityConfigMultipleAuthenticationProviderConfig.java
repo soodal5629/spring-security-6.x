@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * CustomAuthenticationProvider 2개 이상 빈으로 등록하여 적용하는 Config
  */
 public class SecurityConfigMultipleAuthenticationProviderConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         // bean으로 등록된 것을 추가
@@ -34,12 +34,12 @@ public class SecurityConfigMultipleAuthenticationProviderConfig {
     }
 
     // 2개의 빈으로 등록하여 AuthenticationProvider 추가
-    @Bean
+    //@Bean
     public AuthenticationProvider customAuthenticationProvider1() {
-        return new CustomAuthenticationProvider();
+        return new CustomAuthenticationProvider(new CustomUserDetailsService());
     }
 
-    @Bean
+    //@Bean
     public AuthenticationProvider customAuthenticationProvider2() {
         return new CustomAuthenticationProvider2();
     }

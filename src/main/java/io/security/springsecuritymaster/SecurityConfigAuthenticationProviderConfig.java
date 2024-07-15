@@ -49,8 +49,8 @@ public class SecurityConfigAuthenticationProviderConfig {
     }
 
     // 1개의 빈으로 등록하여 AuthenticationProvider 추가
-    @Bean
+    //@Bean
     public AuthenticationProvider customAuthenticationProvider() {
-        return new CustomAuthenticationProvider();
+        return new CustomAuthenticationProvider(new CustomUserDetailsService());
     }
 }

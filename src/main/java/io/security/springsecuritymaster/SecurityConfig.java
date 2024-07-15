@@ -153,7 +153,7 @@ public class SecurityConfig {
     }
 
     // application.yml 파일 설정보다 더 우선순위를 가짐
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user")
                 .password("{noop}1234")

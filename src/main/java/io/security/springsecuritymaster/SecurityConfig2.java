@@ -34,7 +34,7 @@ public class SecurityConfig2 {
         List<AuthenticationProvider> list1 = List.of(new DaoAuthenticationProvider());
         ProviderManager parent = new ProviderManager(list1);
 
-        List<AuthenticationProvider> list2 = List.of(new AnonymousAuthenticationProvider("key"), new CustomAuthenticationProvider());
+        List<AuthenticationProvider> list2 = List.of(new AnonymousAuthenticationProvider("key"), new CustomAuthenticationProvider(new CustomUserDetailsService()));
         ProviderManager providerManager = new ProviderManager(list2, parent);
 
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(http);
