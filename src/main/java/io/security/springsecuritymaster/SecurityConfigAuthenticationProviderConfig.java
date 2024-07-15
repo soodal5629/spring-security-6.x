@@ -6,6 +6,8 @@ import org.springframework.security.authentication.AnonymousAuthenticationProvid
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,14 +20,21 @@ import java.util.List;
 /**
  * AuthenticationManager 직접 생성, CustomAuthenticationFilter, CustomAuthenticationProvider 적용 Config
  */
-public class SecurityConfig2 {
-    //@Bean
+public class SecurityConfigAuthenticationProviderConfig {
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
+        // 일반 객체로 생성하여 추가 방법 1
+        builder.authenticationProvider(new CustomAuthenticationProvider());
+
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/login").permitAll()
-                        .anyRequest().permitAll())
-                .addFilterBefore(customAuthenticationFilter(http), UsernamePasswordAuthenticationFilter.class);
+                        //.requestMatchers("/").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults())
+                // 일반 객체로 생성하여 추가 방법 2
+                .authenticationProvider(new CustomAuthenticationProvider2())
+        ;
         return http.build();
     }
 
