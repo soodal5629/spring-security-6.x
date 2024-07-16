@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @Slf4j
 public class SecurityCustomUserDetailsServiceConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
@@ -23,7 +23,7 @@ public class SecurityCustomUserDetailsServiceConfig {
         return http.build();
     }
 
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }

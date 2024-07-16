@@ -22,6 +22,7 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
 
     public CustomAuthenticationFilter(HttpSecurity http) {
         super(new AntPathRequestMatcher("/api/login", "GET"));
+        // 명시적으로 세션에 SecurityContext 저장해줘야 인증 상태 유지됨
         setSecurityContextRepository(getSecurityRepository(http));
     }
 
