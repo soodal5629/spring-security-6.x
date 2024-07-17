@@ -13,17 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class IndexController {
 
+//    @GetMapping("/")
+//    public String index(String customParam) {
+//        log.info("### customParam ={}", customParam);
+//        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        log.info("### authentication ={}", authentication);
+//        if (customParam != null) {
+//            return "customPage";
+//        } else {
+//            return "index";
+//        }
+//    }
+
     @GetMapping("/")
-    public String index(String customParam) {
-        log.info("### customParam ={}", customParam);
-        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        log.info("### authentication ={}", authentication);
-        if (customParam != null) {
-            return "customPage";
-        } else {
-            return "index";
-        }
+    public Authentication index(Authentication authentication) {
+       return authentication;
     }
 
     @GetMapping("/loginPage")

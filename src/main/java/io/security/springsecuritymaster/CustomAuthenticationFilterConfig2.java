@@ -26,7 +26,7 @@ import java.util.List;
  * 커스텀 인증 방식 적용한 CustomAuthenticationFilter 적용 2
  */
 public class CustomAuthenticationFilterConfig2 {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         AuthenticationManager authenticationManager = builder.build();
