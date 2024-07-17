@@ -63,7 +63,17 @@ public class IndexController {
     }
 
     @GetMapping("/logout-success")
-    public String  logoutSuccess() {
+    public String logoutSuccess() {
         return "logout success";
+    }
+
+    @GetMapping("/invalidSessionUrl")
+    public String invalidSessionUrl() {
+        return "invalidSessionUrl";
+    }
+
+    @GetMapping("/expiredUrl")
+    public String expiredUrl() {
+        return "expiredUrl";
     }
 }

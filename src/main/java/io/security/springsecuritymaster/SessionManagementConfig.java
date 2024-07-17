@@ -20,13 +20,16 @@ public class SessionManagementConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login", "/invalidSessionUrl","/expiredUrl").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .sessionManagement(session -> session
+                        // invalidSessionUrl 과 expiredUrl 모두 설정할 경우 invalidSessionUrl 설정이 동작함
+                        .invalidSessionUrl("/invalidSessionUrl")
                         // 세션 제어 개수 설정해야 세션 제어하는 의미가 있음
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false) // default: false
+                        .expiredUrl("/expiredUrl")
                 )
         ;
         return http.build();
