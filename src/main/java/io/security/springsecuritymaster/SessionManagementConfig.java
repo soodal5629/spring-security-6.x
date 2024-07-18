@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
@@ -27,6 +28,8 @@ public class SessionManagementConfig {
                         //.sessionFixation(f -> f.none()) -> 이건 대응하지 못하므로 의미가 없음. 사용하지 말 것
                         // default: changeSessionId -> 기본이므로 해당 설정 생략해도 동작(권장)
                         .sessionFixation(f -> f.changeSessionId())
+                        // 세션 생성 전략(default: IF_REQUIRED)
+                        //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         // invalidSessionUrl 과 expiredUrl 모두 설정할 경우 invalidSessionUrl 설정이 동작함
                         .invalidSessionUrl("/invalidSessionUrl")
                         // 세션 제어 개수 설정해야 세션 제어하는 의미가 있음
