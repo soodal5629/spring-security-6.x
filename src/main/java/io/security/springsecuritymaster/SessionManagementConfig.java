@@ -19,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * 세션 관리 Config
  */
 public class SessionManagementConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
