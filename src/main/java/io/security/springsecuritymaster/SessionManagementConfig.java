@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
@@ -32,13 +34,19 @@ public class SessionManagementConfig {
                         //.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         // invalidSessionUrl 과 expiredUrl 모두 설정할 경우 invalidSessionUrl 설정이 동작함
                         .invalidSessionUrl("/invalidSessionUrl")
-                        // 세션 제어 개수 설정해야 세션 제어하는 의미가 있음
-                        .maximumSessions(1)
+                        // 세션 제어 개수 명시적으로 설정해야 세션 제어하는 의미가 있음
+                        .maximumSessions(2)
                         .maxSessionsPreventsLogin(false) // default: false
                         .expiredUrl("/expiredUrl")
                 )
         ;
         return http.build();
     }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
 
 }
