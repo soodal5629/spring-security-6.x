@@ -35,7 +35,7 @@ import java.io.IOException;
 @Configuration
 @Slf4j
 public class CorsSecurityConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // http 통신에 대한 인가 정책 설정
