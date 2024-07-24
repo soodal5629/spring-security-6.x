@@ -113,4 +113,9 @@ public class IndexController {
 
         return actualTokenValue;
     }
+
+    @PostMapping("/formCsrf")
+    public CsrfToken formCsrf(CsrfToken csrfToken) {
+        return csrfToken;
+    }
 }

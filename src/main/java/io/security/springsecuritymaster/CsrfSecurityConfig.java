@@ -28,7 +28,7 @@ public class CsrfSecurityConfig {
                 // http 통신에 대한 인가 정책 설정
                 .authorizeHttpRequests(auth -> auth
                         // csrf 기능이 자동으로 활성화되어 있기 때문에 POST와 같은 변경 요청이 올 경우 인증 에러나 로그인 화면으로 리다이렉션 될 수 있다
-                        .requestMatchers("/csrf", "/csrfToken").permitAll()
+                        .requestMatchers("/csrf", "/csrfToken", "/form", "/formCsrf").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults()) // 폼 로그인 방식을 기본 default 방식으로 설정
                 // JS 에서 쿠키를 읽을 수 있는 설정
@@ -37,6 +37,7 @@ public class CsrfSecurityConfig {
                 //        .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler))
                 //.csrf(c -> c.disable())
                 //.csrf(c -> c.ignoringRequestMatchers("/csrf")
+                .csrf(Customizer.withDefaults())
         ;
         return http.build();
     }
