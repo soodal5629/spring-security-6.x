@@ -9,4 +9,9 @@ public class ViewController {
     public String form() {
         return "form";
     }
+
+    @GetMapping("/cookie")
+    public String cookie() {
+        return "cookie";
+    }
 }

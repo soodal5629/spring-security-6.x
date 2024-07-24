@@ -7,6 +7,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 
@@ -14,7 +15,27 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 @Configuration
 @Slf4j
 public class CsrfSecurityConfig {
-    @Bean
+    @Bean(name = "securityFilterChain")
+    public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
+        SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
+        http
+                // http 통신에 대한 인가 정책 설정
+                .authorizeHttpRequests(auth -> auth
+                        // csrf 기능이 자동으로 활성화되어 있기 때문에 POST와 같은 변경 요청이 올 경우 인증 에러나 로그인 화면으로 리다이렉션 될 수 있다
+                        .requestMatchers("/csrf", "/csrfToken", "/cookie", "/cookieCsrf").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(Customizer.withDefaults()) // 폼 로그인 방식을 기본 default 방식으로 설정
+                // JS 에서 csrf 쿠키를 읽을 수 있는 설정
+                .csrf(c -> c
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(csrfTokenRequestHandler))
+                // 커스텀하게 만든 csrf 쿠키 필터 추가
+                .addFilterBefore(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+        ;
+        return http.build();
+    }
+
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 토큰을 쿠키에 저장
         // CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
