@@ -51,7 +51,7 @@ public class CustomAuthenticationFilterConfig2 {
         return customAuthenticationFilter;
     }
 
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user")
                 .password("{noop}1234")

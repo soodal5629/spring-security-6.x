@@ -15,7 +15,7 @@ import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler
 @Configuration
 @Slf4j
 public class CsrfSecurityConfig {
-    @Bean(name = "securityFilterChain")
+    //@Bean(name = "securityFilterChain")
     public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
         SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
         http
