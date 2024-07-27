@@ -45,7 +45,7 @@ public class CustomAuthorizationSecurityConfig {
     }
 
     // 커스텀 RequestMatcher 사용
-    @Bean(name = "securityFilterChain")
+    //@Bean(name = "securityFilterChain")
     public SecurityFilterChain securityFilterChain3(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(new CustomRequestMatcher("/admin")).hasAuthority("ROLE_ADMIN")

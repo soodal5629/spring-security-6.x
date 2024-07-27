@@ -181,4 +181,13 @@ public class IndexController {
         return "custom";
     }
 
+    @GetMapping("/api/photos")
+    public String photos() {
+        return "photos";
+    }
+
+    @GetMapping("/oauth/login")
+    public String oauth() {
+        return "oauthLogin";
+    }
 }
