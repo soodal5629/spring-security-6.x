@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -129,6 +130,12 @@ public class IndexController {
         return "user";
     }
 
+    @GetMapping("/user/{name}")
+    public String userName(@PathVariable String name) {
+        return name;
+    }
+
+
     @GetMapping("/myPage/points")
     public String myPage() {
         return "myPage";
@@ -163,4 +170,15 @@ public class IndexController {
     public String post() {
         return "post";
     }
+
+    @GetMapping("/admin/db")
+    public String adminDb() {
+        return "adminDB";
+    }
+
+    @GetMapping("/custom")
+    public String custom() {
+        return "custom";
+    }
+
 }
