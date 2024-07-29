@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityMatcherConfig {
-    @Bean
+    //@Bean
     // 지금까지 했던 것과 마찬가지로 모든 요청에 대해 수행
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
@@ -20,8 +20,8 @@ public class SecurityMatcherConfig {
     }
 
     // securityMatcher 사용
-    @Bean
-    @Order(1) // 해당 빈이 먼저 실행
+    //@Bean
+    //@Order(1) // 해당 빈이 먼저 실행
     public SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
         http.securityMatchers(matcher -> matcher.requestMatchers("/api/**", "/oauth/**"))
                 .authorizeHttpRequests(auth -> auth
