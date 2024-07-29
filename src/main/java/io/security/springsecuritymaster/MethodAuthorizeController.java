@@ -1,6 +1,10 @@
 package io.security.springsecuritymaster;
 
+import jakarta.annotation.security.DenyAll;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +70,48 @@ public class MethodAuthorizeController {
     @GetMapping("/readMap")
     public Map<String, MethodAccountDTO> readMap() {
         return dataService.readMap();
+    }
+
+    @GetMapping("/secured-user")
+    @Secured("ROLE_USER") // 얘보다는 @PreAuthorize 사용 권장
+    public String securedUser() {
+        return "securedUser";
+    }
+
+    @GetMapping("/secured-admin")
+    @RolesAllowed("ADMIN") // => 'ROLE_ADMIN' 권한
+    public String securedAdmin() {
+        return "securedAdmin";
+    }
+
+    @GetMapping("/permitAll")
+    @PermitAll
+    public String permitAll() {
+        return "permitAll";
+    }
+
+    @GetMapping("/denyAll")
+    @DenyAll
+    public String denyAll() {
+        return "denyAll";
+    }
+
+    @GetMapping("/isAdmin")
+    @IsAdmin
+    public String isAdmin() {
+        return "isAdmin";
+    }
+
+    @GetMapping("/ownership")
+    @Ownership
+    public MethodAccountDTO ownership(String name) {
+        return new MethodAccountDTO(name, true);
+    }
+
+    @GetMapping("/delete")
+    // 표현식을 커스텀하게 빈으로 만들어서 사용
+    @PreAuthorize("@myAuthorizer.isUser(#root)")
+    public String delete() {
+        return "delete";
     }
 }
