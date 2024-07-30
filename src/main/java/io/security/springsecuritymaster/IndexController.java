@@ -176,6 +176,11 @@ public class IndexController {
         return "adminDB";
     }
 
+    @GetMapping("/db")
+    public String db() {
+        return "db";
+    }
+
     @GetMapping("/custom")
     public String custom() {
         return "custom";

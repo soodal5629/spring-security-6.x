@@ -3,8 +3,9 @@ package io.security.springsecuritymaster;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -17,23 +18,14 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
-public class MethodAuthorizeConfig {
+public class RoleHierarchyConfig {
 
-    // @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (webSecurity) -> {
-            // atCommonLocations 타고 들어가보면 StaticResourceLocation에 enum으로 정적 자원 경로 지정되어 있움
-            // enum으로 등록된 경로들은 static 폴더 밑에 있어야 함
-            webSecurity.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        };
-    }
-
-    //@Bean
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/images/**").permitAll() // ignoring 보다 해당 방식을 권장
-                .requestMatchers("/method/permitAll").permitAll()
+                .requestMatchers("/user").hasRole("USER")
+                .requestMatchers("/db").hasRole("DB")
+                .requestMatchers("/admin").hasRole("ADMIN")
                 .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -41,7 +33,16 @@ public class MethodAuthorizeConfig {
         return http.build();
     }
 
-   // @Bean
+    @Bean
+    public RoleHierarchy roleHierarchy() {
+        // setHierarchy deprecated 됨
+        // 권한 계층 설정
+        return new RoleHierarchyImpl().fromHierarchy("ROLE_ADMIN > ROLE_DB\n" +
+            "ROLE_DB > ROLE_USER\n" +
+            "ROLE_USER > ROLE_ANONYMOUS");
+    }
+
+    @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
