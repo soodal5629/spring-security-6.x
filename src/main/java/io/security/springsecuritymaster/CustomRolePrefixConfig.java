@@ -22,6 +22,8 @@ public class CustomRolePrefixConfig {
                         .requestMatchers("/user").hasRole("USER")
                         .requestMatchers("/db").hasRole("DB")
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        // 커스텀 AuthorizationManager 적용
+                        .requestMatchers("/secure").access(new CustomAuthorizationManager())
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -37,7 +39,7 @@ public class CustomRolePrefixConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user").password("{noop}1111").authorities("MYPREFIX_USER").build();
+        UserDetails user = User.withUsername("user").password("{noop}1111").authorities("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
         UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "SECURE").build();
         return new InMemoryUserDetailsManager(user, db, admin);
