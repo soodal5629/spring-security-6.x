@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class CustomRolePrefixConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user").hasRole("USER")
@@ -31,13 +31,13 @@ public class CustomRolePrefixConfig {
         return http.build();
     }
 
-    @Bean
+    //@Bean
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         // 권한의 접두어를 커스텀하게 변경
         return new GrantedAuthorityDefaults("MYPREFIX_");
     }
 
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").authorities("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
