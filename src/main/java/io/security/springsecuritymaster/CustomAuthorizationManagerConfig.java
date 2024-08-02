@@ -29,7 +29,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class CustomAuthorizationManagerConfig {
-    @Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
                         .anyRequest().access(authorizationManager(null)))
@@ -39,7 +39,7 @@ public class CustomAuthorizationManagerConfig {
         return http.build();
     }
 
-    @Bean
+    //@Bean
     public AuthorizationManager<RequestAuthorizationContext> authorizationManager(HandlerMappingIntrospector introspector) {
         List<RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>>> mappings = new ArrayList<>();
         RequestMatcherEntry<AuthorizationManager<RequestAuthorizationContext>> requestMatcherEntry1 =
@@ -58,7 +58,7 @@ public class CustomAuthorizationManagerConfig {
         return new CustomRequestMatcherDelegatingAuthorizationManager(mappings);
     }
 
-    @Bean
+    //@Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.withUsername("user").password("{noop}1111").authorities("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
