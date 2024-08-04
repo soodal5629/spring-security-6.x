@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/method/custom")
 @RequiredArgsConstructor
 public class CustomMethodController {
+    private final MethodDataService methodDataService;
     @GetMapping("/admin")
     @PreAuthorize(value = "")
     public String admin() {
@@ -22,4 +23,14 @@ public class CustomMethodController {
     public MethodAccountDTO user(String name) {
         return new MethodAccountDTO(name, false);
     }
+
+    @GetMapping("/pointcut/admin")
+    public String pointcutAdmin() {
+        return methodDataService.getUser();
+    }
+    @GetMapping("/pointcut/user")
+    public MethodAccountDTO pointcutUser(String name) {
+        return methodDataService.getOwner(name);
+    }
+
 }

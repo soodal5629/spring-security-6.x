@@ -9,8 +9,8 @@ import org.springframework.security.authorization.method.AuthorizationManagerAft
 import org.springframework.security.authorization.method.AuthorizationManagerBeforeMethodInterceptor;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
-@EnableMethodSecurity(prePostEnabled = false)
-@Configuration
+//@EnableMethodSecurity(prePostEnabled = false)
+//@Configuration
 public class MethodSecurityConfig {
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)

@@ -33,7 +33,8 @@ public class CustomMethodAuthorizationManagerConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails user = User.withUsername("user").password("{noop}1111").authorities("USER").build();
+        //UserDetails user = User.withUsername("user").password("{noop}1111").authorities("USER").build();
+        UserDetails user = User.withUsername("user").password("{noop}1111").roles("USER").build();
         UserDetails db = User.withUsername("db").password("{noop}1111").roles("DB").build();
         UserDetails admin = User.withUsername("admin").password("{noop}1111").roles("ADMIN", "SECURE").build();
         return new InMemoryUserDetailsManager(user, db, admin);
