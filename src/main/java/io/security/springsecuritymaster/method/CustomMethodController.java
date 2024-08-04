@@ -33,4 +33,9 @@ public class CustomMethodController {
         return methodDataService.getOwner(name);
     }
 
+    @GetMapping("/pointcut/display")
+    public String display(String name) {
+        return methodDataService.getDisplay();
+    }
+
 }

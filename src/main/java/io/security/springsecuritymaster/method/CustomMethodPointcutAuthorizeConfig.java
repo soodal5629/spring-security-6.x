@@ -2,7 +2,9 @@ package io.security.springsecuritymaster.method;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.aop.Advisor;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
+import org.springframework.aop.support.ComposablePointcut;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,5 +40,24 @@ public class CustomMethodPointcutAuthorizeConfig {
         AuthorityAuthorizationManager<MethodInvocation> manager = AuthorityAuthorizationManager.hasRole("USER");
 
         return new AuthorizationManagerBeforeMethodInterceptor(pattern, manager);
+    }
+
+    /**
+     * 다중 포인트컷
+     */
+    @Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public Advisor pointcutAdvisor2() {
+        AspectJExpressionPointcut pattern = new AspectJExpressionPointcut();
+        pattern.setExpression("execution(* io.security.springsecuritymaster.method.MethodDataService.getUser(..))");
+
+        AspectJExpressionPointcut pattern2 = new AspectJExpressionPointcut();
+        pattern2.setExpression("execution(* io.security.springsecuritymaster.method.MethodDataService.getOwner(..))");
+
+        ComposablePointcut composablePointcut = new ComposablePointcut((Pointcut) pattern);
+        composablePointcut.union((Pointcut) pattern2);
+
+        AuthorityAuthorizationManager<MethodInvocation> manager = AuthorityAuthorizationManager.hasRole("USER");
+        return new AuthorizationManagerBeforeMethodInterceptor(composablePointcut, manager);
     }
 }

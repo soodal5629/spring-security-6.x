@@ -12,4 +12,8 @@ public class MethodDataService {
     public MethodAccountDTO getOwner(String name) {
         return new MethodAccountDTO(name, false);
     }
+
+    public String getDisplay() {
+        return "display";
+    }
 }
