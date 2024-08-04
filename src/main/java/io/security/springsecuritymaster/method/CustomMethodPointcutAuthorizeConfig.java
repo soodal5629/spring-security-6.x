@@ -26,7 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * 메소드 기반 인가 처리 어노테이션 말고 포인트컷(표현식) 이용
  */
-@Configuration
+//@Configuration
 @EnableMethodSecurity(prePostEnabled = false)
 public class CustomMethodPointcutAuthorizeConfig {
     @Bean
