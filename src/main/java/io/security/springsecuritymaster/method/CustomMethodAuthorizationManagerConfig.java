@@ -16,7 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 /**
  * 메소드 기반 인가 처리 커스텀 AuthorizationManager 적용 (@PreAuthorize, @PostAuthorize,.)
  */
-@Configuration
+//@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = false)
 public class CustomMethodAuthorizationManagerConfig {
