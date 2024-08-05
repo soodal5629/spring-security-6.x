@@ -46,4 +46,8 @@ public class AuthenticationEvents {
         log.info("custom failure event = {} {}", event.getClass(), event.getException().getMessage());
     }
 
+    @EventListener
+    public void onFailure(DefaultAuthenticationFailureEvent event) {
+        log.info("custom failure event = {} {}", event.getClass(), event.getException().getMessage());
+    }
 }
