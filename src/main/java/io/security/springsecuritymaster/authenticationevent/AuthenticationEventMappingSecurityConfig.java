@@ -1,4 +1,4 @@
-package io.security.springsecuritymaster.authorizationevent;
+package io.security.springsecuritymaster.authenticationevent;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;

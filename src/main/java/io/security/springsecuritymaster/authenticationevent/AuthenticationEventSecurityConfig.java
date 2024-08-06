@@ -1,4 +1,4 @@
-package io.security.springsecuritymaster.authorizationevent;
+package io.security.springsecuritymaster.authenticationevent;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

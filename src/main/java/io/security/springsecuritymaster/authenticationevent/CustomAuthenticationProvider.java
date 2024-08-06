@@ -1,4 +1,4 @@
-package io.security.springsecuritymaster.authorizationevent;
+package io.security.springsecuritymaster.authenticationevent;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;

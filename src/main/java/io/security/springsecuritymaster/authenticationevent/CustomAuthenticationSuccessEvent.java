@@ -1,4 +1,4 @@
-package io.security.springsecuritymaster.authorizationevent;
+package io.security.springsecuritymaster.authenticationevent;
 
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.core.Authentication;
