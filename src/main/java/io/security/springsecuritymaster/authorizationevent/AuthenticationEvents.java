@@ -1,4 +1,4 @@
-package io.security.springsecuritymaster.event;
+package io.security.springsecuritymaster.authorizationevent;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
