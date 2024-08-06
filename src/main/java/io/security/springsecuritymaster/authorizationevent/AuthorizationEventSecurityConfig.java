@@ -35,11 +35,16 @@ public class AuthorizationEventSecurityConfig {
     }
 
     /**
-    * 해당 bean 설정 반드시 필요
+    * AuthorizationEventPublisher bean 설정 반드시 필요
     * */
-    @Bean
+    //@Bean
     AuthorizationEventPublisher authorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         return new SpringAuthorizationEventPublisher(applicationEventPublisher);
+    }
+
+    @Bean
+    AuthorizationEventPublisher myAuthorizationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        return new MyAuthorizationEventPublisher(new SpringAuthorizationEventPublisher(applicationEventPublisher), applicationEventPublisher);
     }
 
     @Bean

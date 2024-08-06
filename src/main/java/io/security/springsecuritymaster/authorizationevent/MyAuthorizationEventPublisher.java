@@ -24,6 +24,7 @@ public class MyAuthorizationEventPublisher implements AuthorizationEventPublishe
         if(!decision.isGranted()) {
             this.delegate.publishAuthorizationEvent(authentication, object, decision);
         }
+        // ROLE_ADMIN 권한을 가진 계정일 경우만 이벤트 발행하는 커스텀 로직
         if(shouldThisEventBePublished(decision)) {
             AuthorizationGrantedEvent<T> granted = new AuthorizationGrantedEvent<>(authentication, object, decision);
             eventPublisher.publishEvent(granted);

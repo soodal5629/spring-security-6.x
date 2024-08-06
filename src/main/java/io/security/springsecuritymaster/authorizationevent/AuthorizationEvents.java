@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AuthorizationEvents {
     @EventListener
-    public void onAuthorization(AuthorizationEvent event) {
+    public void onAuthorization(AuthorizationEvent event) { // AuthorizationEvent 하위 클래스 이벤트 발행시 항상 수신됨
         log.info("event = {} {}", event.getClass(), event.getAuthentication().get().getAuthorities());
     }
 
