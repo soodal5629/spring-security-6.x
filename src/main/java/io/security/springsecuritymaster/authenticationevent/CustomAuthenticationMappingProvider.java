@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Component
+//@Component
 public class CustomAuthenticationMappingProvider implements AuthenticationProvider {
     private final AuthenticationEventPublisher authenticationEventPublisher;
     @Override

@@ -20,7 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import java.util.Collections;
 import java.util.Map;
 
-@Configuration
+//@Configuration
 @EnableWebSecurity
 public class AuthenticationEventMappingSecurityConfig {
 
