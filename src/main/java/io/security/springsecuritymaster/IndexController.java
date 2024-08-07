@@ -1,6 +1,8 @@
 package io.security.springsecuritymaster;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -13,6 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -199,5 +205,23 @@ public class IndexController {
     @GetMapping("/secure")
     public String secure() {
         return "secure";
+    }
+
+    @GetMapping("/servlet-login")
+    public String servletLogin(HttpServletRequest request, LoginDTO loginDTO) throws ServletException {
+        // 필터가 아닌 서블릿을 통해 인증 및 로그인 처리
+        request.login(loginDTO.getUsername(), loginDTO.getPassword());
+        log.info("login is successful");
+        return "login";
+    }
+
+    @GetMapping("/servlet-users")
+    public List servletUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // 서블릿 내 authenticate 메소드 사용
+        boolean authenticated = request.authenticate(response);
+        if(authenticated) {
+            return List.of(new LoginDTO("user", "1111"));
+        }
+        return Collections.EMPTY_LIST;
     }
 }

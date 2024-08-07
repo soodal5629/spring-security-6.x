@@ -7,7 +7,7 @@ import org.springframework.security.authorization.event.AuthorizationEvent;
 import org.springframework.security.authorization.event.AuthorizationGrantedEvent;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Slf4j
 public class AuthorizationEvents {
     @EventListener

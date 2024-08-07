@@ -16,7 +16,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-@Configuration
+//@Configuration
 @EnableWebSecurity
 public class AuthorizationEventSecurityConfig {
     @Bean
