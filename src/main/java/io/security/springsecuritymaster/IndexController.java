@@ -6,10 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,22 +28,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class IndexController {
     private final SessionInfoService sessionInfoService;
-//    @GetMapping("/")
-//    public String index(String customParam) {
-//        log.info("### customParam ={}", customParam);
-//        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
-//        Authentication authentication = securityContext.getAuthentication();
-//        log.info("### authentication ={}", authentication);
+
+    // Authentication 익명 사용자 여부 확인 가능
+    AuthenticationTrustResolverImpl trustResolver = new AuthenticationTrustResolverImpl();
+
+    @GetMapping("/")
+    public String index(String customParam) {
+        log.info("### customParam ={}", customParam);
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        log.info("### authentication ={}", authentication);
 //        if (customParam != null) {
 //            return "customPage";
 //        } else {
 //            return "index";
 //        }
-//    }
+        return trustResolver.isAnonymous(authentication) ? "anonymous" : "authenticated";
+    }
 
-    //@GetMapping("/")
+    @GetMapping("/index-authentication")
     public Authentication index(Authentication authentication) {
-       return authentication;
+        return authentication;
     }
 
     @GetMapping("/sessionInfo")
@@ -223,5 +231,30 @@ public class IndexController {
             return List.of(new LoginDTO("user", "1111"));
         }
         return Collections.EMPTY_LIST;
+    }
+
+    @GetMapping("/annotation-user")
+    // Authentication 내 User 객체 반환
+    public User user(@AuthenticationPrincipal User user) {
+        return user;
+    }
+
+    @GetMapping("/annotation-username")
+    // Authentication -> User -> User 내 필드 username 바로 가져올 수 있음
+    // 익명사용자일 경우 Principal이 'anonymousUser' 문자열로 들어가기 때문에 필드가 없으므로 에러 발생
+    public String username(@AuthenticationPrincipal(expression = "username") String username) {
+        return username;
+    }
+
+    @GetMapping("/annotation-currentuser")
+    // @AuthenticationPrincipal 활용 커스텀 어노테이션
+    public User currentUser(@CurrentUser User user) {
+        return user;
+    }
+
+    @GetMapping("/annotation-currentusername")
+    // @AuthenticationPrincipal 활용 커스텀 어노테이션
+    public String currentUserName(@CurrentUsername String username) {
+        return username;
     }
 }
