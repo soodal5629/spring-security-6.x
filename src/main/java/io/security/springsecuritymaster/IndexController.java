@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.core.Authentication;
@@ -22,12 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class IndexController {
     private final SessionInfoService sessionInfoService;
+    private final AsyncService asyncService;
 
     // Authentication 익명 사용자 여부 확인 가능
     AuthenticationTrustResolverImpl trustResolver = new AuthenticationTrustResolverImpl();
@@ -256,5 +259,35 @@ public class IndexController {
     // @AuthenticationPrincipal 활용 커스텀 어노테이션
     public String currentUserName(@CurrentUsername String username) {
         return username;
+    }
+
+    @GetMapping("/callable")
+    public Callable<Authentication> call() {
+        // 메인/부모 스레드
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+        log.info("securityContext = {}", securityContext);
+        log.info("Parent Thread = {}", Thread.currentThread().getName());
+
+        // 자식 스레드
+        // Callable은 별도의 스레드로 실행됨
+        return new Callable<Authentication>() {
+            @Override
+            public Authentication call() throws Exception {
+                SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+                log.info("securityContext = {}", securityContext);
+                log.info("Child Thread = {}", Thread.currentThread().getName());
+                return securityContext.getAuthentication();
+            }
+        };
+    }
+
+    @GetMapping("/async")
+    public Authentication async() {
+        SecurityContext securityContext = SecurityContextHolder.getContextHolderStrategy().getContext();
+        log.info("securityContext = {}", securityContext);
+        log.info("Parent Thread = {}", Thread.currentThread().getName());
+
+        asyncService.asyncMethod();
+        return securityContext.getAuthentication();
     }
 }
