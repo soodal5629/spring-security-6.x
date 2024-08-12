@@ -27,7 +27,7 @@ public class CustomDSLSecurityConfig {
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
-                .with(MyCustomDsl.customDsl(), dsl -> dsl.setFlag(true))
+                //.with(MyCustomDsl.customDsl(), dsl -> dsl.setFlag(true))
         ;
 
         return http.build();
